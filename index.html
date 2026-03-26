@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidiana Data - Soluciones SQL Server Enterprise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --obsidiana-primary: #0A0A0A;
+            --obsidiana-secondary: #1A1A1A;
+            --cyan-electric: #00D9FF;
+            --blue-tech: #0099FF;
+            --gray-carbon: #2D2D2D;
+            --gray-medium: #6B6B6B;
+            --white: #FFFFFF;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: var(--obsidiana-primary);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* NAVIGATION */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-nav svg {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .logo-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--white);
+        }
+        
+        .logo-subtext {
+            font-size: 0.8em;
+            color: var(--cyan-electric);
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--cyan-electric);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyan-electric);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(0, 153, 255, 0.15) 0%, transparent 50%);
+            opacity: 0.5;
+        }
+        
+        .hex-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(30deg, rgba(0, 217, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(0, 217, 255, 0.03) 87.5%, rgba(0, 217, 255, 0.03)),
+                linear-gradient(150deg, rgba(0, 217, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(0, 217, 255, 0.03) 87.5%, rgba(0, 217, 255, 0.03)),
+                linear-gradient(30deg, rgba(0, 217, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(0, 217, 255, 0.03) 87.5%, rgba(0, 217, 255, 0.03)),
+                linear-gradient(150deg, rgba(0, 217, 255, 0.03) 12%, transparent 12.5%, transparent 87%, rgba(0, 217, 255, 0.03) 87.5%, rgba(0, 217, 255, 0.03));
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 1000px;
+            padding: 0 40px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-logo {
+            margin-bottom: 30px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--cyan-electric) 0%, var(--blue-tech) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5em;
+            color: var(--gray-medium);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan-electric) 0%, var(--blue-tech) 100%);
+            color: var(--obsidiana-primary);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--cyan-electric);
+            border: 2px solid var(--cyan-electric);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--cyan-electric);
+            color: var(--obsidiana-primary);
+            transform: translateY(-2px);
+        }
+        
+        /* STATS SECTION */
+        .stats {
+            padding: 80px 40px;
+            background: var(--obsidiana-secondary);
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--cyan-electric) 0%, var(--blue-tech) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            color: var(--gray-medium);
+            margin-top: 10px;
+        }
+        
+        /* SERVICES SECTION */
+        .services {
+            padding: 120px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .section-header h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: var(--cyan-electric);
+        }
+        
+        .section-header p {
+            font-size: 1.2em;
+            color: var(--gray-medium);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .service-card {
+            background: var(--obsidiana-secondary);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan-electric), var(--blue-tech));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 217, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.1);
+        }
+        
+        .service-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .service-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: var(--cyan-electric);
+        }
+        
+        .service-card p {
+            color: var(--gray-medium);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .service-features {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .service-features li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--gray-medium);
+        }
+        
+        .service-features li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--cyan-electric);
+            font-weight: bold;
+        }
+        
+        /* TEAM SECTION */
+        .team {
+            padding: 120px 40px;
+            background: var(--obsidiana-secondary);
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        .team-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .team-member {
+            text-align: center;
+            padding: 30px;
+            background: var(--obsidiana-primary);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+        
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--cyan-electric) 0%, var(--blue-tech) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--obsidiana-primary);
+        }
+        
+        .team-member h4 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+            color: var(--white);
+        }
+        
+        .team-role {
+            color: var(--cyan-electric);
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+        
+        .team-bio {
+            color: var(--gray-medium);
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        /* CONTACT SECTION */
+        .contact {
+            padding: 120px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .contact-form {
+            background: var(--obsidiana-secondary);
+            padding: 50px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            margin-top: 60px;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--cyan-electric);
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: var(--obsidiana-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--cyan-electric);
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .contact-item {
+            text-align: center;
+            padding: 30px;
+            background: var(--obsidiana-secondary);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .contact-item-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item h4 {
+            color: var(--cyan-electric);
+            margin-bottom: 10px;
+        }
+        
+        .contact-item p {
+            color: var(--gray-medium);
+        }
+        
+        /* FOOTER */
+        footer {
+            background: var(--obsidiana-secondary);
+            padding: 60px 40px 30px;
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h4 {
+            color: var(--cyan-electric);
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        .footer-section p,
+        .footer-section a {
+            color: var(--gray-medium);
+            line-height: 1.8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: var(--cyan-electric);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray-medium);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--obsidiana-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--cyan-electric);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: var(--cyan-electric);
+            color: var(--obsidiana-primary);
+            transform: translateY(-3px);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2em;
+            }
+            
+            .section-header h2 {
+                font-size: 2em;
+            }
+            
+            .services-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-form {
+                padding: 30px;
+            }
+        }
+        
+        /* SMOOTH SCROLL */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo-nav">
+                <svg width="50" height="50" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="75,15 112.5,36.25 112.5,78.75 75,100 37.5,78.75 37.5,36.25" fill="#1a1a1a" stroke="#00D9FF" stroke-width="4"/>
+                    <polygon points="75,28 100,41.25 100,68.75 75,82 50,68.75 50,41.25" fill="#2a2a2a" stroke="#0099FF" stroke-width="3"/>
+                    <polygon points="75,45 87.5,51.25 87.5,63.75 75,70 62.5,63.75 62.5,51.25" fill="#00D9FF"/>
+                    <circle cx="75" cy="57.5" r="3" fill="#FFFFFF" opacity="0.6"/>
+                </svg>
+                <div>
+                    <div class="logo-text">OBSIDIANA DATA</div>
+                    <div class="logo-subtext">Soluciones SQL Server</div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#equipo">Equipo</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <button class="menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="inicio">
+        <div class="hero-background"></div>
+        <div class="hex-pattern"></div>
+        <div class="hero-content">
+            <div class="hero-logo">
+                <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="75,15 112.5,36.25 112.5,78.75 75,100 37.5,78.75 37.5,36.25" fill="#1a1a1a" stroke="#00D9FF" stroke-width="4"/>
+                    <polygon points="75,28 100,41.25 100,68.75 75,82 50,68.75 50,41.25" fill="#2a2a2a" stroke="#0099FF" stroke-width="3"/>
+                    <polygon points="75,45 87.5,51.25 87.5,63.75 75,70 62.5,63.75 62.5,51.25" fill="#00D9FF"/>
+                    <polygon points="75,45 87.5,51.25 87.5,57.5 75,57.5" fill="#FFFFFF" opacity="0.4"/>
+                    <circle cx="75" cy="57.5" r="4" fill="#FFFFFF" opacity="0.6"/>
+                </svg>
+            </div>
+            <h1>OBSIDIANA DATA</h1>
+            <p class="hero-subtitle">Soluciones profesionales de SQL Server para empresas que buscan solidez, precisión y escalabilidad</p>
+            <div class="cta-buttons">
+                <a href="#contacto" class="btn btn-primary">Solicitar Consultoría</a>
+                <a href="#servicios" class="btn btn-secondary">Conocer Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">99.5%</div>
+                <div class="stat-label">Disponibilidad</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Soporte Técnico</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Mexicano</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">SQL 2022</div>
+                <div class="stat-label">Última Versión</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section class="services" id="servicios">
+        <div class="section-header">
+            <h2>Nuestros Servicios</h2>
+            <p>Soluciones completas de SQL Server adaptadas a las necesidades de tu empresa</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🗄️</div>
+                <h3>Implementación SQL Server</h3>
+                <p>Diseño, instalación y configuración completa de infraestructura SQL Server 2022 Standard/Enterprise con mejores prácticas.</p>
+                <ul class="service-features">
+                    <li>Arquitectura personalizada</li>
+                    <li>Alta disponibilidad (Always On)</li>
+                    <li>Configuración de seguridad</li>
+                    <li>Optimización de rendimiento</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🔒</div>
+                <h3>Seguridad & Compliance</h3>
+                <p>Implementación de mejores prácticas de seguridad y cumplimiento normativo para proteger tus datos críticos.</p>
+                <ul class="service-features">
+                    <li>Transparent Data Encryption (TDE)</li>
+                    <li>Auditoría y monitoreo</li>
+                    <li>Control de accesos</li>
+                    <li>Cumplimiento regulatorio</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">💾</div>
+                <h3>Backup & Recovery</h3>
+                <p>Estrategias robustas de respaldo automatizado y recuperación ante desastres para garantizar continuidad del negocio.</p>
+                <ul class="service-features">
+                    <li>Backups automáticos</li>
+                    <li>Disaster recovery plan</li>
+                    <li>Pruebas de recuperación</li>
+                    <li>Retención configurable</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Monitoreo & Tuning</h3>
+                <p>Monitoreo proactivo 24/7 y optimización continua para mantener tu base de datos en máximo rendimiento.</p>
+                <ul class="service-features">
+                    <li>Alertas en tiempo real</li>
+                    <li>Análisis de rendimiento</li>
+                    <li>Optimización de queries</li>
+                    <li>Reportes ejecutivos</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">🎓</div>
+                <h3>Capacitación & Soporte</h3>
+                <p>Capacitación especializada para tu equipo y soporte técnico continuo para maximizar tu inversión.</p>
+                <ul class="service-features">
+                    <li>Capacitación on-site</li>
+                    <li>Documentación completa</li>
+                    <li>Soporte técnico 24/7</li>
+                    <li>Consultoría continua</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">☁️</div>
+                <h3>Migración & Modernización</h3>
+                <p>Migración segura desde versiones anteriores o plataformas diferentes hacia SQL Server moderno.</p>
+                <ul class="service-features">
+                    <li>Análisis de viabilidad</li>
+                    <li>Migración sin downtime</li>
+                    <li>Modernización de queries</li>
+                    <li>Validación post-migración</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section class="team" id="equipo">
+        <div class="section-header">
+            <h2>Nuestro Equipo</h2>
+            <p>Expertos en SQL Server con experiencia en el ecosistema empresarial mexicano</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="team-avatar">IA</div>
+                <h4>Irving Archundia</h4>
+                <div class="team-role">CEO & Founder</div>
+                <p class="team-bio">Líder estratégico con visión de negocio y experiencia en gestión de proyectos tecnológicos empresariales.</p>
+            </div>
+            
+            <div class="team-member">
+                <div class="team-avatar">IB</div>
+                <h4>Ismael Bahena</h4>
+                <div class="team-role">CTO & Co-Founder</div>
+                <p class="team-bio">Experto en .NET y SQL Server con amplia experiencia en arquitectura de soluciones enterprise.</p>
+            </div>
+            
+            <div class="team-member">
+                <div class="team-avatar">AM</div>
+                <h4>Arlex Marín</h4>
+                <div class="team-role">Database Administrator</div>
+                <p class="team-bio">Especialista en administración SQL Server, optimización de rendimiento y alta disponibilidad.</p>
+            </div>
+            
+            <div class="team-member">
+                <div class="team-avatar">JL</div>
+                <h4>Jesús Lara</h4>
+                <div class="team-role">Solutions Architect</div>
+                <p class="team-bio">Arquitecto de soluciones con enfoque en diseño de infraestructura escalable y segura.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact" id="contacto">
+        <div class="section-header">
+            <h2>Contáctanos</h2>
+            <p>Agenda una consultoría gratuita y descubre cómo podemos ayudarte</p>
+        </div>
+        
+        <div class="contact-info">
+            <div class="contact-item">
+                <div class="contact-item-icon">📧</div>
+                <h4>Email</h4>
+                <p>contacto@obsidianadata.mx</p>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-item-icon">📱</div>
+                <h4>Teléfono</h4>
+                <p>+52 777 123 4567</p>
+            </div>
+            
+            <div class="contact-item">
+                <div class="contact-item-icon">📍</div>
+                <h4>Ubicación</h4>
+                <p>Cuernavaca, Morelos</p>
+            </div>
+        </div>
+        
+        <div class="contact-form">
+            <form>
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="empresa">Empresa</label>
+                    <input type="text" id="empresa" name="empresa" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mensaje">Cuéntanos sobre tu proyecto</label>
+                    <textarea id="mensaje" name="mensaje" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Solicitud</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>OBSIDIANA DATA</h4>
+                <p>Soluciones profesionales de SQL Server con la solidez de la obsidiana y la innovación del futuro.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">in</a>
+                    <a href="#" class="social-link">𝕏</a>
+                    <a href="#" class="social-link">📘</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Servicios</h4>
+                <a href="#servicios">Implementación SQL Server</a>
+                <a href="#servicios">Seguridad & Compliance</a>
+                <a href="#servicios">Backup & Recovery</a>
+                <a href="#servicios">Monitoreo & Tuning</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <a href="#equipo">Nuestro Equipo</a>
+                <a href="#contacto">Contáctanos</a>
+                <a href="#">Blog</a>
+                <a href="#">Casos de Éxito</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p>📧 contacto@obsidianadata.mx</p>
+                <p>📱 +52 777 123 4567</p>
+                <p>📍 Cuernavaca, Morelos, México</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 Obsidiana Data. Todos los derechos reservados.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Tecnología de vanguardia con raíces profundas 💎</p>
+        </div>
+    </footer>
+</body>
+</html>
